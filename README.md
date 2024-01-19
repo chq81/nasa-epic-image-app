@@ -1,6 +1,6 @@
-# nasa-epic-image-downloader-demo
+# nasa-epic-image-app
 
-The *nasa-epic-image-downloader-demo* provides the possibility to download NASA images from the NASA EPIC (Earth Polychromatic Imaging Camera) API.
+The *nasa-epic-image-app* provides the possibility to download NASA images from the NASA EPIC (Earth Polychromatic Imaging Camera) API.
 
 ### Setup
 Please clone the repository in a local folder and make sure you have an API Key from NASA.
