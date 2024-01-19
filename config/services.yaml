@@ -22,11 +22,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Nasa\Epic\EpicImageClient:
+    App\Nasa\Epic\Client\EpicImageClient:
         arguments:
             - '%env(NASA_EPIC_API_ROOT_URL)%'
             - '%env(NASA_API_KEY)%'
 
-    App\Nasa\Epic\EpicImageStorage:
+    App\Nasa\Epic\Storage\EpicImageStorage:
         arguments:
             - '%env(NASA_EPIC_ARCHIVE_ROOT_URL)%'

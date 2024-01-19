@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Nasa\Epic;
+namespace App\Nasa\Epic\Client;
 
-use App\Model\EpicNasaImage;
+use App\Nasa\Epic\Model\EpicNasaImage;
 use App\Nasa\Exception\NasaClientFailedException;
 use App\Nasa\Exception\NasaClientResponseEmptyException;
 use DateTimeImmutable;
@@ -67,6 +67,6 @@ final readonly class EpicImageClient
             throw new NasaClientResponseEmptyException('The content of the response is empty.');
         }
 
-        return $this->serializer->deserialize($content, 'array<App\Model\EpicNasaImage>', 'json');
+        return $this->serializer->deserialize($content, 'array<App\Nasa\Epic\Model\EpicNasaImage>', 'json');
     }
 }

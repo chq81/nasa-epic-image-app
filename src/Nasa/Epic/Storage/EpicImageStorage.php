@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Nasa\Epic;
+namespace App\Nasa\Epic\Storage;
 
-use App\Model\EpicNasaImage;
+use App\Nasa\Epic\Model\EpicNasaImage;
 use App\Nasa\Exception\MissingInformationException;
 use DateTimeImmutable;
 use Symfony\Component\Filesystem\Filesystem;

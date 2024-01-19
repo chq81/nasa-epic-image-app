@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Nasa\Epic\EpicImageClient;
-use App\Nasa\Epic\EpicImageStorage;
+use App\Nasa\Epic\Client\EpicImageClient;
+use App\Nasa\Epic\Storage\EpicImageStorage;
 use App\Nasa\Exception\MissingInformationException;
 use DateTimeImmutable;
 use Exception;
@@ -90,7 +90,7 @@ class DownloadImagesCommand extends Command
             try {
                 $imageDate = new DateTimeImmutable($imageDate);
             } catch (Exception) {
-                $output->writeln('The given date was invalid, please provide in form YYYY-MM-DD.');
+                $output->writeln('<error>The given date was invalid, please provide in form YYYY-MM-DD.</error>');
 
                 return Command::INVALID;
             }
@@ -99,7 +99,7 @@ class DownloadImagesCommand extends Command
         if (!in_array($imageryType, self::IMAGERY_TYPES)) {
             $output->writeln(
                 sprintf(
-                    "Wrong imagery type '%s' given. Possible values are %s.",
+                    "<error>Wrong imagery type '%s' given. Possible values are %s.</error>",
                     $imageryType,
                     implode(', ', self::IMAGERY_TYPES)
                 )
@@ -111,7 +111,7 @@ class DownloadImagesCommand extends Command
         if (!in_array($imageFormat, self::IMAGE_FORMATS)) {
             $output->writeln(
                 sprintf(
-                    "Wrong image format '%s' given. Possible values are %s.",
+                    "<error>Wrong image format '%s' given. Possible values are %s.</error>",
                     $imageFormat,
                     implode(', ', self::IMAGE_FORMATS)
                 )
@@ -125,7 +125,7 @@ class DownloadImagesCommand extends Command
         } catch (Throwable $e) {
             $output->writeln(
                 sprintf(
-                    'The images could not be retrieved from the NASA EPIC API due to the following error: %s',
+                    '<error>The images could not be retrieved from the NASA EPIC API due to the following error: %s</error>',
                     $e->getMessage()
                 )
             );
@@ -133,14 +133,17 @@ class DownloadImagesCommand extends Command
             return Command::FAILURE;
         }
 
-        $output->writeln(sprintf('%d images were found.', count($imageCollection)));
+        $output->writeln(sprintf('<info>%d images were found.</info>', count($imageCollection)));
 
         if (!$this->filesystem->exists($imageFolder)) {
             try {
                 $this->filesystem->mkdir($imageFolder);
             } catch (IOException $e) {
                 $output->writeln(
-                    sprintf("The given folder '%s' for storing images could not be created.", $e->getPath())
+                    sprintf(
+                        "<error>The given folder '%s' for storing images could not be created.</error>",
+                        $e->getPath()
+                    )
                 );
 
                 return Command::INVALID;
@@ -153,7 +156,7 @@ class DownloadImagesCommand extends Command
             } catch (MissingInformationException $e) {
                 $output->writeln(
                     sprintf(
-                        'For image %s, the %s is missing.',
+                        '<info>For image %s, the %s is missing.</info>',
                         $image->getIdentifier(),
                         $e->getMissingInformation()
                     )
@@ -162,7 +165,7 @@ class DownloadImagesCommand extends Command
             } catch (IOException $e) {
                 $output->writeln(
                     sprintf(
-                        "The image could not be stored in the folder '%s'. The following error occured: %s",
+                        "<error>The image could not be stored in the folder '%s'. The following error occured: %s</error>",
                         $e->getPath(),
                         $e->getMessage()
                     )
@@ -173,7 +176,7 @@ class DownloadImagesCommand extends Command
         }
 
         $output->writeln(
-            sprintf('All %d images were successfully downloaded and stored.', count($imageCollection))
+            sprintf('<info>All %d images were successfully downloaded and stored.</info>', count($imageCollection))
         );
 
         return Command::SUCCESS;
