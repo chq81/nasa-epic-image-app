@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Nasa\Epic\Client\EpicImageClient;
+use App\Nasa\Epic\Model\ImageFormatInterface;
+use App\Nasa\Epic\Model\ImageryTypeInterface;
 use App\Nasa\Epic\Storage\EpicImageStorage;
 use App\Nasa\Exception\MissingInformationException;
 use DateTimeImmutable;
@@ -29,10 +31,6 @@ use Throwable;
 )]
 class DownloadImagesCommand extends Command
 {
-    private const IMAGERY_TYPES = ['natural', 'enhanced', 'aerosol', 'cloud'];
-
-    private const IMAGE_FORMATS = ['png', 'jpg'];
-
     /**
      * @param EpicImageClient $imageClient
      * @param EpicImageStorage $imageStorage
@@ -62,15 +60,18 @@ class DownloadImagesCommand extends Command
                 'imagery-type',
                 't',
                 InputOption::VALUE_OPTIONAL,
-                'The imagery type of the NASA images. Possible values are ' . implode(',', self::IMAGERY_TYPES),
-                'natural'
+                'The imagery type of the NASA images. Possible values are ' . implode(
+                    ',',
+                    ImageryTypeInterface::IMAGERY_TYPES
+                ),
+                ImageryTypeInterface::IMAGERY_TYPE_NATURAL
             )
             ->addOption(
                 'image-format',
                 'f',
                 InputOption::VALUE_OPTIONAL,
-                'The image format. Possible values are ' . implode(',', self::IMAGE_FORMATS),
-                'png'
+                'The image format. Possible values are ' . implode(',', ImageFormatInterface::IMAGE_FORMATS),
+                ImageFormatInterface::IMAGE_FORMAT_PNG
             );
 
         $this->setHelp('This command allows you to download and store images from the NASA EPIC API');
@@ -96,24 +97,24 @@ class DownloadImagesCommand extends Command
             }
         }
 
-        if (!in_array($imageryType, self::IMAGERY_TYPES)) {
+        if (!in_array($imageryType, ImageryTypeInterface::IMAGERY_TYPES)) {
             $output->writeln(
                 sprintf(
                     "<error>Wrong imagery type '%s' given. Possible values are %s.</error>",
                     $imageryType,
-                    implode(', ', self::IMAGERY_TYPES)
+                    implode(', ', ImageryTypeInterface::IMAGERY_TYPES)
                 )
             );
 
             return Command::INVALID;
         }
 
-        if (!in_array($imageFormat, self::IMAGE_FORMATS)) {
+        if (!in_array($imageFormat, ImageFormatInterface::IMAGE_FORMATS)) {
             $output->writeln(
                 sprintf(
                     "<error>Wrong image format '%s' given. Possible values are %s.</error>",
                     $imageFormat,
-                    implode(', ', self::IMAGE_FORMATS)
+                    implode(', ', ImageFormatInterface::IMAGE_FORMATS)
                 )
             );
 

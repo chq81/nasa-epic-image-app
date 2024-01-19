@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Nasa\Epic\Client;
 
 use App\Nasa\Epic\Model\EpicNasaImage;
+use App\Nasa\Epic\Model\ImageryTypeInterface;
 use App\Nasa\Exception\NasaClientFailedException;
 use App\Nasa\Exception\NasaClientResponseEmptyException;
 use DateTimeImmutable;
@@ -37,11 +38,15 @@ final readonly class EpicImageClient
     /**
      * Retrieves images from the NASA EPIC API for a given date and imagery type.
      *
-     * @return EpicNasaImage[]
+     * @param DateTimeImmutable|null $date The date for which the images are retrieved
+     * @param string $imageryType The imagery type
+     * @return EpicNasaImage[] The retrieved image collection
      * @throws TransportExceptionInterface
      */
-    public function get(?DateTimeImmutable $date, string $imageryType = 'natural'): array
-    {
+    public function get(
+        ?DateTimeImmutable $date,
+        string $imageryType = ImageryTypeInterface::IMAGERY_TYPE_NATURAL
+    ): array {
         $imageUrl = $this->nasaEpicApiRootUrl . '/' . $imageryType . '/date/' . $date?->format('Y-m-d');
         $response = $this->httpClient->request(
             Request::METHOD_GET,
