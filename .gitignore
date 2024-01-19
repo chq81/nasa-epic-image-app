@@ -1,0 +1,21 @@
+###> vagrant ###
+/.vagrant/
+Vagrantfile
+###< vagrant ###
+
+###> phpstorm ###
+.idea/
+###< phpstorm ###
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/var/
+/vendor/
+/data/
+###< symfony/framework-bundle ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
