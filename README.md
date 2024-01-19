@@ -3,10 +3,10 @@
 The *nasa-epic-image-app* provides the possibility to download NASA images from the NASA EPIC (Earth Polychromatic Imaging Camera) API.
 
 ### Setup
-Please clone the repository in a local folder and make sure you have an API Key from NASA.
-You are able to retrieve one here: https://api.nasa.gov/index.html#signUp
-
-After cloning, copy the provided .env.dev.local.dist to .env.dev.local and set the API Key.
+* Please clone the repository in a local folder
+* Make sure you have an API Key from NASA. You are able to retrieve one here: https://api.nasa.gov/index.html#signUp
+* Run `composer install`. 
+* Copy the provided .env.dev.local.dist to .env.dev.local and set the API Key.
 
 ### Run
 To download images, just run
