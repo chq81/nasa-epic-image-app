@@ -13,12 +13,13 @@ use DateTimeImmutable;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 
 /**
@@ -34,12 +35,10 @@ class DownloadImagesCommand extends Command
     /**
      * @param EpicImageClient $imageClient
      * @param EpicImageStorage $imageStorage
-     * @param Filesystem $filesystem
      */
     public function __construct(
         private readonly EpicImageClient $imageClient,
-        private readonly EpicImageStorage $imageStorage,
-        private readonly Filesystem $filesystem
+        private readonly EpicImageStorage $imageStorage
     ) {
         parent::__construct();
     }
@@ -82,6 +81,8 @@ class DownloadImagesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $imageFolder = $input->getArgument('image-folder');
         $imageDate = $input->getArgument('date');
         $imageryType = $input->getOption('imagery-type');
@@ -135,23 +136,22 @@ class DownloadImagesCommand extends Command
         }
 
         $output->writeln(sprintf('<info>%d images were found.</info>', count($imageCollection)));
+        try {
+            $this->imageStorage->createFolder($imageFolder);
+        } catch (IOException $e) {
+            $output->writeln(
+                sprintf(
+                    "<error>The given folder '%s' for storing images could not be created.</error>",
+                    $e->getPath()
+                )
+            );
 
-        if (!$this->filesystem->exists($imageFolder)) {
-            try {
-                $this->filesystem->mkdir($imageFolder);
-            } catch (IOException $e) {
-                $output->writeln(
-                    sprintf(
-                        "<error>The given folder '%s' for storing images could not be created.</error>",
-                        $e->getPath()
-                    )
-                );
-
-                return Command::INVALID;
-            }
+            return Command::INVALID;
         }
 
-        foreach ($imageCollection as $image) {
+        $progressBar = new ProgressBar($output);
+
+        foreach ($progressBar->iterate($imageCollection) as $image) {
             try {
                 $this->imageStorage->save($image, $imageFolder, $imageryType, $imageFormat);
             } catch (MissingInformationException $e) {
@@ -176,6 +176,7 @@ class DownloadImagesCommand extends Command
             }
         }
 
+        $io->newLine();
         $output->writeln(
             sprintf('<info>All %d images were successfully downloaded and stored.</info>', count($imageCollection))
         );

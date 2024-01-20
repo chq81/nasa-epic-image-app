@@ -9,6 +9,8 @@ use App\Nasa\Epic\Model\ImageFormatInterface;
 use App\Nasa\Epic\Model\ImageryTypeInterface;
 use App\Nasa\Exception\MissingInformationException;
 use DateTimeImmutable;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -27,6 +29,20 @@ final readonly class EpicImageStorage
     }
 
     /**
+     * Creates the root folder to store images to.
+     *
+     * @param string $imageFolder
+     * @return void
+     * @throws IOException
+     */
+    public function createFolder(string $imageFolder): void
+    {
+        if (!$this->filesystem->exists($imageFolder)) {
+            $this->filesystem->mkdir($imageFolder);
+        }
+    }
+
+    /**
      * Stores the given image to the provided folder, each folder specifying the date of the image.
      *
      * @param EpicNasaImage $image The single image
@@ -34,6 +50,9 @@ final readonly class EpicImageStorage
      * @param string $imageryType The imagery type
      * @param string $imageFormat The image format
      * @return void
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws MissingInformationException
      */
     public function save(
         EpicNasaImage $image,
