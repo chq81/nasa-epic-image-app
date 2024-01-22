@@ -12,6 +12,7 @@ use DateTimeImmutable;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -72,6 +73,10 @@ final readonly class EpicImageClient
             throw new NasaClientResponseEmptyException('The content of the response is empty.');
         }
 
-        return $this->serializer->deserialize($content, 'array<App\Nasa\Epic\Model\EpicNasaImage>', 'json');
+        return $this->serializer->deserialize(
+            $content,
+            sprintf('array<%s>', EpicNasaImage::class),
+            JsonEncoder::FORMAT
+        );
     }
 }
